@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  php_apache:
+    container_name: php_apache
+    build:
+      context: ./docker/php-apache
+      dockerfile: Dockerfile 
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - 443:443
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html/public
+    depends_on:
+      - mysql
+
+  mysql:
+    container_name: db
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: shop 
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    # ports:
+    #   - 9906:3306
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./scripts/shop_db.sql:/docker-entrypoint-initdb.d/init.sql
